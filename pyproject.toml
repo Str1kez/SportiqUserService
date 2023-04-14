@@ -1,0 +1,57 @@
+[tool.poetry]
+name = "user-service"
+version = "0.1.0"
+description = "Microservice for Sportiq Project"
+authors = ["Str1kez <vazinov@yandex.ru>"]
+readme = "README.md"
+packages = [{include = "user_service"}]
+
+[tool.poetry.dependencies]
+python = "^3.10"
+fastapi = "^0.95.1"
+fastapi-jwt-auth = "^0.5.0"
+passlib = {extras = ["bcrypt"], version = "^1.7.4"}
+sqlalchemy = "^2.0.9"
+asyncpg = "^0.27.0"
+pydantic = "^1.10.7"
+psycopg2 = "^2.9.6"
+redis = "^4.5.4"
+python-dotenv = "^1.0.0"
+
+
+[tool.poetry.group.dev.dependencies]
+black = "^23.3.0"
+isort = "^5.12.0"
+pre-commit = "^3.2.2"
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
+
+[tool.black]
+line-length = 120
+target-version = ['py311']
+include = '\.pyi?$'
+exclude = '''
+(
+  /(
+      \.eggs         # exclude a few common directories in the
+    | \.git          # root of the project
+    | \.hg
+    | \.mypy_cache
+    | \.tox
+    | \.venv
+    | _build
+    | buck-out
+    | build
+    | dist
+  )/
+)
+'''
+
+[tool.isort]
+known_local_folder = "user_service"
+lines_after_imports = 2
+multi_line_output = 3
+line_length = 120
+include_trailing_comma = true
