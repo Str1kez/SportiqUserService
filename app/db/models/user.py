@@ -1,20 +1,12 @@
 from sqlalchemy import VARCHAR, Column
-from sqlalchemy.dialects.postgresql import BIGINT, TEXT, UUID
-from sqlalchemy.sql import func
+from sqlalchemy.dialects.postgresql import TEXT
 
-from app.db import DeclarativeBase
+from app.db.models.base import BaseId
 
 
-# TODO: New user
-class User(DeclarativeBase):
+class User(BaseId):
     __tablename__ = "user"
 
-    _id = Column(
-        UUID(as_uuid=True),
-        primary_key=True,
-        server_default=func.gen_random_uuid(),
-        name="id",
-    )
     username = Column(
         VARCHAR(30),
         nullable=False,
@@ -25,7 +17,11 @@ class User(DeclarativeBase):
         TEXT,
         nullable=False,
     )
-    time_label = Column(
-        BIGINT,
-        nullable=True,
+    first_name = Column(
+        VARCHAR(30),
+        nullable=False,
+    )
+    last_name = Column(
+        VARCHAR(30),
+        nullable=False,
     )

@@ -5,7 +5,6 @@ from fastapi.middleware.cors import CORSMiddleware
 from uvicorn import run
 
 from app.config import DefaultSettings
-from app.db.cache import Cache
 from app.endpoints import routes
 
 

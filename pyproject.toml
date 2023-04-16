@@ -19,6 +19,7 @@ redis = "^4.5.4"
 python-dotenv = "^1.0.0"
 alembic = "^1.10.3"
 uvicorn = "^0.21.1"
+python-multipart = "^0.0.6"
 
 [tool.poetry.group.dev.dependencies]
 black = "^23.3.0"
@@ -57,7 +58,7 @@ exclude = '''
 '''
 
 [tool.isort]
-known_local_folder = "user_service"
+known_local_folder = "app"
 lines_after_imports = 2
 multi_line_output = 3
 line_length = 120
