@@ -1,10 +1,10 @@
 [tool.poetry]
-name = "user-service"
+name = "app"
 version = "0.1.0"
 description = "Microservice for Sportiq Project"
 authors = ["Str1kez <vazinov@yandex.ru>"]
 readme = "README.md"
-packages = [{include = "user_service"}]
+packages = [{include = "app"}]
 
 [tool.poetry.dependencies]
 python = "^3.10"
@@ -17,6 +17,7 @@ pydantic = "^1.10.7"
 psycopg2 = "^2.9.6"
 redis = "^4.5.4"
 python-dotenv = "^1.0.0"
+alembic = "^1.10.3"
 
 
 [tool.poetry.group.dev.dependencies]
