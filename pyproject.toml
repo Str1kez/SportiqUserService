@@ -1,10 +1,10 @@
 [tool.poetry]
-name = "user-service"
+name = "app"
 version = "0.1.0"
 description = "Microservice for Sportiq Project"
 authors = ["Str1kez <vazinov@yandex.ru>"]
 readme = "README.md"
-packages = [{include = "user_service"}]
+packages = [{include = "app"}]
 
 [tool.poetry.dependencies]
 python = "^3.10"
@@ -17,7 +17,9 @@ pydantic = "^1.10.7"
 psycopg2 = "^2.9.6"
 redis = "^4.5.4"
 python-dotenv = "^1.0.0"
-
+alembic = "^1.10.3"
+uvicorn = "^0.21.1"
+python-multipart = "^0.0.6"
 
 [tool.poetry.group.dev.dependencies]
 black = "^23.3.0"
@@ -27,6 +29,12 @@ pre-commit = "^3.2.2"
 [build-system]
 requires = ["poetry-core"]
 build-backend = "poetry.core.masonry.api"
+
+[tool.pyright]
+include = ["."]
+executionEnvironments = [
+  { root = "." },
+]
 
 [tool.black]
 line-length = 120
@@ -50,7 +58,7 @@ exclude = '''
 '''
 
 [tool.isort]
-known_local_folder = "user_service"
+known_local_folder = "app"
 lines_after_imports = 2
 multi_line_output = 3
 line_length = 120
