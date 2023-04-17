@@ -15,7 +15,16 @@ upgrade:
 	cd app/db; poetry run alembic upgrade $(args)
 
 db:
-	docker compose -f build/docker-compose.yaml up -d --remove-orphans db
+	docker compose -f deployments/docker-compose.yaml up -d --remove-orphans db
+
+kds:
+	docker compose -f deployments/docker-compose.yaml up -d --remove-orphans kds
+
+build-kds:
+	docker build . -t kds-redis -f build/KDS/Dockerfile
+
+up:
+	docker compose -f deployments/docker-compose.yaml up -d --remove-orphans
 
 down:
-	docker compose -f build/docker-compose.yaml down
+	docker compose -f deployments/docker-compose.yaml down

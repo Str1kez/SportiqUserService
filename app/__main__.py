@@ -5,7 +5,9 @@ from fastapi.middleware.cors import CORSMiddleware
 from uvicorn import run
 
 from app.config import DefaultSettings
+from app.db.storage import Storage
 from app.endpoints import routes
+from app.tools import generate_secret_key
 
 
 def bind_routes(app: FastAPI):
@@ -29,13 +31,14 @@ def add_cors(app: FastAPI):
 
 
 @asynccontextmanager
-async def check_db_connection(_: FastAPI):
-    # TODO: ping redis
-    settings = DefaultSettings()
+async def init_secret_key(_: FastAPI):
+    kds_db = Storage().get_connection()
+    secret_key = generate_secret_key()
+    await kds_db.setnx("secret_key", secret_key)
     yield
 
 
-app = FastAPI(lifespan=check_db_connection)
+app = FastAPI(lifespan=init_secret_key)
 add_cors(app)
 bind_routes(app)
 

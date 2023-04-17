@@ -1,0 +1,1 @@
+*/10 * * * * redis-cli set secret_key $(openssl rand -hex 32)

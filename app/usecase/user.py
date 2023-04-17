@@ -11,9 +11,9 @@ async def create_user(user_data: UserDTO, session: AsyncSession) -> None:
     await session.commit()
 
 
-async def get_user(user_data: Login, session: AsyncSession) -> UserDTO:
+async def get_active_user(user_data: Login, session: AsyncSession) -> UserDTO:
     user = user_data.to_orm()
-    query = select(User).where(User.username == user["username"])
+    query = select(User).where(User.username == user["username"]).where(User.is_active == True)
     result = await session.execute(query)
     user_dto = UserDTO.from_orm(result.scalar_one())
     user_data.validate_password(user_dto.password.get_secret_value())
