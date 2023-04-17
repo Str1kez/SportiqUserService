@@ -1,4 +1,4 @@
-FROM redis:7.0-alpine
+FROM redis:7-alpine
 
 RUN apk add --no-cache openssl
 COPY ./misc/crontab.txt /crontab.txt
