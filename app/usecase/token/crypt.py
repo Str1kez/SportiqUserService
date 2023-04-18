@@ -7,7 +7,7 @@ from app.schema import Token
 async def _encrypt_token(token: Token) -> str:
     settings = JWTSettings()
     secret_key = await settings.get_secret_key()
-    encoded_jwt = jwt.encode(token.dict(), secret_key, settings.algorithm)
+    encoded_jwt = jwt.encode(token.dict(by_alias=True), secret_key, settings.algorithm)
     return encoded_jwt
 
 
