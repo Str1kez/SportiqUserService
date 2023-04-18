@@ -1,5 +1,4 @@
 from fastapi import APIRouter, Depends, status
-from fastapi.security import OAuth2PasswordRequestForm
 from sqlalchemy.exc import NoResultFound
 from sqlalchemy.ext.asyncio import AsyncSession
 
@@ -15,11 +14,11 @@ router = APIRouter(tags=["Auth"], prefix="/login")
 
 @router.post("", response_model=CreatedTokens, status_code=status.HTTP_200_OK)
 async def login(
-    credentials: OAuth2PasswordRequestForm = Depends(),
+    credentials: Login,
     session: AsyncSession = Depends(get_session),
 ) -> CreatedTokens:
     try:
-        user = await get_active_user(Login(username=credentials.username, password=credentials.password), session)
+        user = await get_active_user(credentials, session)
     except NoResultFound:
         raise UserNotFound
     return await create_tokens(user._id)

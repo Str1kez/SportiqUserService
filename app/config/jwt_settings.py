@@ -7,7 +7,6 @@ from app.exceptions import SecretKeyNotFound
 
 
 class JWTSettings(BaseModel):
-    # TODO: Добавить еще параметров
     access_expires: timedelta = timedelta(minutes=15)
     refresh_expires: timedelta = timedelta(days=30)
     algorithm = "HS256"

@@ -1,8 +1,10 @@
-from sqlalchemy import insert, select
+from sqlalchemy import insert, select, update
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.db.models import User
 from app.schema import Login, SignUp
+from app.schema.token import Token
+from app.schema.user import UserUpdate
 
 
 async def create_user(user_data: SignUp, session: AsyncSession) -> User:
@@ -18,4 +20,25 @@ async def get_active_user(user_data: Login, session: AsyncSession) -> User:
     result = await session.execute(query)
     user_db = result.scalar_one()
     user_data.validate_password(user_db.password)
+    return user_db
+
+
+async def get_user_by_id(user_id: str, session: AsyncSession) -> User:
+    query = select(User).where(User._id == user_id).where(User.is_active == True)
+    result = await session.execute(query)
+    user_db = result.scalar_one()
+    return user_db
+
+
+async def update_user(user: UserUpdate, token: Token, session: AsyncSession) -> User:
+    query = (
+        update(User)
+        .where(User._id == token.user)
+        .where(User.is_active == True)
+        .values(**user.prepared_dict())
+        .returning(User)
+    )
+    request = await session.execute(query)
+    user_db = request.scalar_one()
+    await session.commit()
     return user_db

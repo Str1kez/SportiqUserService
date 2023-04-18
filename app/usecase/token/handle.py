@@ -1,6 +1,8 @@
 from datetime import datetime
 from uuid import uuid4
 
+from fastapi import Depends
+from fastapi.security import OAuth2PasswordBearer
 from jose import JWTError
 
 from .crypt import _decrypt_token, _encrypt_token
@@ -9,6 +11,10 @@ from app.db.storage import Storage
 from app.exceptions import InvalidToken
 from app.exceptions.token import TokenIDUpcent, TokenInBlacklist
 from app.schema import CreatedTokens, Token
+from app.tools import get_token_url
+
+
+oauth2_scheme = OAuth2PasswordBearer(tokenUrl=get_token_url())
 
 
 async def create_tokens(user_id: str) -> CreatedTokens:
@@ -22,24 +28,31 @@ async def create_tokens(user_id: str) -> CreatedTokens:
 async def validate_token(token: str) -> Token:
     try:
         token_dto = await _decrypt_token(token)
-    except JWTError:
-        raise InvalidToken
-    await check_if_token_in_blacklist(token_dto)
+    except JWTError as err:
+        raise InvalidToken.factory(str(err))
+    await _check_if_token_in_blacklist(token_dto)
     return token_dto
 
 
-async def check_if_token_in_blacklist(decrypted_token: Token) -> None:
+async def get_validated_access_token(token_header: str = Depends(oauth2_scheme)) -> Token:
+    token_dto = await validate_token(token_header)
+    if token_dto.type_ != "access":
+        raise InvalidToken
+    return token_dto
+
+
+async def move_to_blacklist(jti: str) -> None:
+    kds_db = Storage().get_connection()
+    await kds_db.set("blacklist:" + jti, 1)
+
+
+async def _check_if_token_in_blacklist(decrypted_token: Token) -> None:
     if decrypted_token.jti == "":
         raise TokenIDUpcent
     kds_db = Storage().get_connection()
     entry = await kds_db.get("blacklist:" + decrypted_token.jti)
     if entry:
         raise TokenInBlacklist
-
-
-async def move_to_blacklist(jti: str) -> None:
-    kds_db = Storage().get_connection()
-    await kds_db.set("blacklist:" + jti, 1)
 
 
 def _create_token(user_db_id: str, _type: str) -> Token:

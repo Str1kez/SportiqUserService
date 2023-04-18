@@ -38,7 +38,7 @@ async def init_secret_key(_: FastAPI):
     yield
 
 
-app = FastAPI(lifespan=init_secret_key)
+app = FastAPI(lifespan=init_secret_key, root_path=f"http://{DefaultSettings().APP_HOST}:{DefaultSettings().APP_PORT}")
 add_cors(app)
 bind_routes(app)
 

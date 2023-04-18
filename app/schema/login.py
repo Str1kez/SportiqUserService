@@ -15,4 +15,4 @@ class Login(BaseModel):
 
     def validate_password(self, hashed_password: str) -> None:
         if not verify_password(self.password.get_secret_value(), hashed_password):
-            raise InvalidPassword(detail="You entered invalid password")
+            raise InvalidPassword

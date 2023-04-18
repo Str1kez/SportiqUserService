@@ -2,9 +2,9 @@ from fastapi import APIRouter, Depends, Response, status
 from fastapi.security import OAuth2PasswordBearer
 
 from app.exceptions import InvalidToken
-from app.schema import CreatedTokens, RefreshRequest
+from app.schema import CreatedTokens, RefreshRequest, Token
 from app.tools import get_token_url
-from app.usecase.token import create_tokens, move_to_blacklist, validate_token
+from app.usecase.token import create_tokens, get_validated_access_token, move_to_blacklist, validate_token
 
 
 router = APIRouter(tags=["Auth", "Token"], prefix="/token")
@@ -22,12 +22,8 @@ async def refresh(token_request: RefreshRequest) -> CreatedTokens:
 
 
 @router.post("/access-revoke", response_class=Response, status_code=status.HTTP_200_OK)
-async def access_revoke(token_header: str = Depends(oauth2_scheme)) -> None:
-    print(token_header)
-    token_dto = await validate_token(token_header)
-    if token_dto.type_ != "access":
-        raise InvalidToken
-    await move_to_blacklist(token_dto.jti)
+async def access_revoke(token: Token = Depends(get_validated_access_token)) -> None:
+    await move_to_blacklist(token.jti)
 
 
 @router.post("/refresh-revoke", response_class=Response, status_code=status.HTTP_200_OK)
