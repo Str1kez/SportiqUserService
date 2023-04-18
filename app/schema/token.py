@@ -1,3 +1,5 @@
+from datetime import datetime
+
 from pydantic import BaseModel, Field
 
 
@@ -7,3 +9,12 @@ class CreatedTokens(BaseModel):
 
     class Config:
         allow_population_by_field_name = True
+
+
+class Token(BaseModel):
+    sub: str
+    exp: datetime
+    iat: datetime
+    jti: str
+    _type: str = Field(..., alias="type")
+    user: str

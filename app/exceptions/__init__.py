@@ -1,5 +1,5 @@
 from app.exceptions.auth import InvalidPassword, SecretKeyNotFound
-from app.exceptions.db import DBError, UserNotFound
+from app.exceptions.db import UserExists, UserNotFound
 
 
-__all__ = ["DBError", "UserNotFound", "InvalidPassword", "SecretKeyNotFound"]
+__all__ = ["UserExists", "UserNotFound", "InvalidPassword", "SecretKeyNotFound"]

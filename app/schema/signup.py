@@ -4,7 +4,7 @@ from app.schema.login import Login
 from app.tools import get_password_hash
 
 
-class UserDTO(Login):
+class SignUp(Login):
     first_name: str = Field(..., min_length=2, alias="firstName")
     last_name: str = Field(..., min_length=2, alias="lastName")
 
