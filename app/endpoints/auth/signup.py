@@ -19,6 +19,6 @@ async def signup(
 ) -> CreatedTokens:
     try:
         user = await create_user(credentials, session)
-    except IntegrityError:
-        raise UserExists
+    except IntegrityError as err:
+        raise UserExists.factory(str(err))
     return await create_tokens(user._id)

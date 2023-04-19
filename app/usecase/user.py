@@ -42,3 +42,9 @@ async def update_user(user: UserUpdate, token: Token, session: AsyncSession) -> 
     user_db = request.scalar_one()
     await session.commit()
     return user_db
+
+
+async def delete_user(user_id: str, session: AsyncSession) -> None:
+    query = update(User).where(User._id == user_id).where(User.is_active == True).values({"is_active": False})
+    await session.execute(query)
+    await session.commit()

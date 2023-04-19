@@ -1,10 +1,11 @@
-from pydantic import BaseModel, Field, SecretStr
+from pydantic import BaseModel, Field, SecretStr, constr
 
 from app.tools.password_hash import get_password_hash
 
 
 class User(BaseModel):
     username: str
+    phone_number: str = Field(..., alias="phoneNumber")
     first_name: str = Field(..., alias="firstName")
     last_name: str = Field(..., alias="lastName")
 
@@ -15,6 +16,9 @@ class User(BaseModel):
 
 class UserUpdate(BaseModel):
     username: str | None = Field(min_length=6)
+    phone_number: constr(strip_whitespace=True, regex=r"^(\+)[1-9][0-9\-\(\)\.]{9,15}$") | None = Field(
+        alias="phoneNumber"
+    )
     password: SecretStr | None = Field(min_length=8)
     first_name: str | None = Field(alias="firstName")
     last_name: str | None = Field(alias="lastName")

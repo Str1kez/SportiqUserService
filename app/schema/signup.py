@@ -1,10 +1,13 @@
-from pydantic import Field
+from pydantic import Field, constr
 
 from app.schema.login import Login
 from app.tools import get_password_hash
 
 
 class SignUp(Login):
+    phone_number: constr(strip_whitespace=True, regex=r"^(\+)[1-9][0-9\-\(\)\.]{9,15}$") = Field(
+        ..., alias="phoneNumber"
+    )
     first_name: str = Field(..., min_length=2, alias="firstName")
     last_name: str = Field(..., min_length=2, alias="lastName")
 

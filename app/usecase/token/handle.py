@@ -8,8 +8,7 @@ from jose import JWTError
 from .crypt import _decrypt_token, _encrypt_token
 from app.config.jwt_settings import JWTSettings
 from app.db.storage import Storage
-from app.exceptions import InvalidToken
-from app.exceptions.token import TokenIDUpcent, TokenInBlacklist
+from app.exceptions import InvalidToken, TokenIDUpcent, TokenInBlacklist, UserDeleted
 from app.schema import CreatedTokens, Token
 from app.tools import get_token_url
 
@@ -41,18 +40,16 @@ async def get_validated_access_token(token_header: str = Depends(oauth2_scheme))
     return token_dto
 
 
-async def move_to_blacklist(jti: str) -> None:
-    kds_db = Storage().get_connection()
-    await kds_db.set("blacklist:" + jti, 1)
-
-
 async def _check_if_token_in_blacklist(decrypted_token: Token) -> None:
     if decrypted_token.jti == "":
         raise TokenIDUpcent
     kds_db = Storage().get_connection()
-    entry = await kds_db.get("blacklist:" + decrypted_token.jti)
+    entry = await kds_db.get("blacklist:key:" + decrypted_token.jti)
     if entry:
         raise TokenInBlacklist
+    entry = await kds_db.get("blacklist:user:" + decrypted_token.user)
+    if entry:
+        raise UserDeleted
 
 
 def _create_token(user_db_id: str, _type: str) -> Token:

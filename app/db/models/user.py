@@ -18,6 +18,12 @@ class User(BaseId):
         TEXT,
         nullable=False,
     )
+    phone_number: Mapped[str] = mapped_column(
+        VARCHAR(20),
+        nullable=False,
+        unique=True,
+        index=True,
+    )
     first_name: Mapped[str] = mapped_column(
         VARCHAR(30),
         nullable=False,
