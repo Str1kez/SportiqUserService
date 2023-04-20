@@ -33,3 +33,8 @@ services:
 volumes:
   user-data:
   auth-data:
+
+networks:
+  default:
+    name: sportiq
+    external: true
