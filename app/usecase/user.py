@@ -3,7 +3,6 @@ from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.db.models import User
 from app.schema import Login, SignUp
-from app.schema.token import Token
 from app.schema.user import UserUpdate
 
 
@@ -30,12 +29,12 @@ async def get_user_by_id(user_id: str, session: AsyncSession) -> User:
     return user_db
 
 
-async def update_user(user: UserUpdate, token: Token, session: AsyncSession) -> User:
+async def update_user(user_data: UserUpdate, user_id: str, session: AsyncSession) -> User:
     query = (
         update(User)
-        .where(User._id == token.user)
+        .where(User._id == user_id)
         .where(User.is_active == True)
-        .values(**user.prepared_dict())
+        .values(**user_data.prepared_dict())
         .returning(User)
     )
     request = await session.execute(query)

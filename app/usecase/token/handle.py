@@ -1,7 +1,7 @@
 from datetime import datetime
 from uuid import uuid4
 
-from fastapi import Depends
+# from fastapi import Depends
 from fastapi.security import OAuth2PasswordBearer
 from jose import JWTError
 
@@ -33,11 +33,11 @@ async def validate_token(token: str) -> Token:
     return token_dto
 
 
-async def get_validated_access_token(token_header: str = Depends(oauth2_scheme)) -> Token:
-    token_dto = await validate_token(token_header)
-    if token_dto.type_ != "access":
-        raise InvalidToken
-    return token_dto
+# async def get_validated_access_token(token_header: str = Depends(oauth2_scheme)) -> Token:
+#     token_dto = await validate_token(token_header)
+#     if token_dto.type_ != "access":
+#         raise InvalidToken
+#     return token_dto
 
 
 async def _check_if_token_in_blacklist(decrypted_token: Token) -> None:

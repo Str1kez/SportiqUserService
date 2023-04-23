@@ -1,0 +1,58 @@
+version: "3"
+
+services:
+  db:
+    image: postgres:15-alpine
+    container_name: user_service_db
+    restart: unless-stopped
+    env_file: .env
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER} -d ${POSTGRES_DB}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 10s
+    volumes:
+      - "user-data:/var/lib/postgresql/data"
+    ports:
+      - 5433:5432
+  kds:
+    image: kds-redis:latest
+    build:
+      context: .
+      dockerfile: build/KDS/Dockerfile
+    container_name: kds_and_jwt
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 1s
+      timeout: 3s
+      retries: 5
+    volumes:
+      - "kds-data:/data"
+    ports:
+      - 6379:6379
+  user_service:
+    image: user-service:latest
+    build:
+      context: .
+      dockerfile: build/service/Dockerfile
+    container_name: user_service
+    restart: unless-stopped
+    env_file: .env
+    ports:
+      - "8000:${APP_PORT}"
+    depends_on:
+      db:
+        condition: service_healthy
+      kds:
+        condition: service_healthy
+
+volumes:
+  user-data:
+  kds-data:
+
+networks:
+  default:
+    name: sportiq
+    external: true
