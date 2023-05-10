@@ -1,10 +1,10 @@
-from fastapi import APIRouter, Header, Response, status
+from fastapi import APIRouter, Cookie, Header, Response, status
 from fastapi.security import OAuth2PasswordBearer
 
 from app.exceptions import InvalidToken
-from app.schema import CreatedTokens, RefreshRequest
+from app.schema import CreatedTokens
 from app.tools import get_token_url, move_to_blacklist
-from app.usecase.token import create_tokens, validate_token
+from app.usecase.token import create_token, validate_token
 
 
 router = APIRouter(tags=["Auth", "Token"], prefix="/token")
@@ -12,13 +12,15 @@ oauth2_scheme = OAuth2PasswordBearer(tokenUrl=get_token_url())
 
 
 @router.post("/refresh", response_model=CreatedTokens, status_code=status.HTTP_201_CREATED)
-async def refresh(token_request: RefreshRequest) -> CreatedTokens:
-    token_dto = await validate_token(token_request.refresh_token)
+async def refresh(response: Response, refresh_token: str = Cookie(..., alias="refreshToken")) -> CreatedTokens:
+    token_dto = await validate_token(refresh_token)
     if token_dto.type_ != "refresh":
         raise InvalidToken
     await move_to_blacklist(token_dto.jti, "key")
-    new_tokens = await create_tokens(token_dto.user)
-    return new_tokens
+    access_token = CreatedTokens(access_token=await create_token(token_dto.user, "access"))
+    refresh_token = await create_token(token_dto.user, "refresh")
+    response.set_cookie("refreshToken", refresh_token, httponly=True)
+    return access_token
 
 
 @router.post("/access-revoke", response_class=Response, status_code=status.HTTP_200_OK)
@@ -27,8 +29,8 @@ async def access_revoke(token_jti: str = Header(..., alias="Token")) -> None:
 
 
 @router.post("/refresh-revoke", response_class=Response, status_code=status.HTTP_200_OK)
-async def refresh_revoke(token_request: RefreshRequest) -> None:
-    token_dto = await validate_token(token_request.refresh_token)
+async def refresh_revoke(refresh_token: str = Cookie(..., alias="refreshToken")) -> None:
+    token_dto = await validate_token(refresh_token)
     if token_dto.type_ != "refresh":
         raise InvalidToken
     await move_to_blacklist(token_dto.jti, "key")
