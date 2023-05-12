@@ -21,7 +21,10 @@ async def get_user_info(user_id: str = Header(..., alias="User"), session: Async
     except (IntegrityError, NoResultFound):
         await move_to_blacklist(user_id, "user")
         raise UserNotFound
-    return User.from_orm(user_db)
+    response = User.from_orm(user_db)
+    response.id = user_id
+    return response
+    # return User.from_orm(user_db)
 
 
 @router.patch("", response_model=User, status_code=status.HTTP_200_OK)
@@ -37,4 +40,6 @@ async def update_user_info(
         raise UserNotFound
     except IntegrityError as err:
         raise UserExists.factory(str(err))
-    return User.from_orm(user_db)
+    response = User.from_orm(user_db)
+    response.id = user_id
+    return response

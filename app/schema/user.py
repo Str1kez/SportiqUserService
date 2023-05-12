@@ -4,6 +4,7 @@ from app.tools.password_hash import get_password_hash
 
 
 class User(BaseModel):
+    id: str | None
     username: str
     phone_number: str = Field(..., alias="phoneNumber")
     first_name: str = Field(..., alias="firstName")
