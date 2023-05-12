@@ -24,5 +24,5 @@ async def signup(
         raise UserExists.factory(str(err))
     access_token = CreatedTokens(access_token=await create_token(user._id, "access"))
     refresh_token = await create_token(user._id, "refresh")
-    response.set_cookie("refreshToken", refresh_token, httponly=True)
+    response.set_cookie("refreshToken", refresh_token, httponly=True, domain="api.sportiq.org")
     return access_token

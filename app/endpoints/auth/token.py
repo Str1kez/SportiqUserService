@@ -19,7 +19,7 @@ async def refresh(response: Response, refresh_token: str = Cookie(..., alias="re
     await move_to_blacklist(token_dto.jti, "key")
     access_token = CreatedTokens(access_token=await create_token(token_dto.user, "access"))
     refresh_token = await create_token(token_dto.user, "refresh")
-    response.set_cookie("refreshToken", refresh_token, httponly=True)
+    response.set_cookie("refreshToken", refresh_token, httponly=True, domain="api.sportiq.org")
     return access_token
 
 

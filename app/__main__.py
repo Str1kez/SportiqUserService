@@ -18,7 +18,7 @@ def bind_routes(app: FastAPI):
 
 def add_cors(app: FastAPI):
     origins = [
-        "*",
+        "http://sportiq.org:7999",
     ]
 
     app.add_middleware(
