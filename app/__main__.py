@@ -38,7 +38,12 @@ async def init_secret_key(_: FastAPI):
     yield
 
 
-app = FastAPI(lifespan=init_secret_key, root_path=f"http://{DefaultSettings().APP_HOST}:{DefaultSettings().APP_PORT}")
+app = FastAPI(
+    lifespan=init_secret_key,
+    root_path=f"http://{DefaultSettings().APP_HOST}:{DefaultSettings().APP_PORT}",
+    title="User Microservice for Sportiq project",
+    description="This microservice supports authentication with JWT and operations with personal info",
+)
 add_cors(app)
 bind_routes(app)
 

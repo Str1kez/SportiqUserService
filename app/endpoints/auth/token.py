@@ -11,7 +11,9 @@ router = APIRouter(tags=["Auth", "Token"], prefix="/token")
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl=get_token_url())
 
 
-@router.post("/refresh", response_model=CreatedTokens, status_code=status.HTTP_201_CREATED)
+@router.post(
+    "/refresh", response_model=CreatedTokens, status_code=status.HTTP_201_CREATED, description="Token refreshing"
+)
 async def refresh(response: Response, refresh_token: str = Cookie(..., alias="refreshToken")) -> CreatedTokens:
     token_dto = await validate_token(refresh_token)
     if token_dto.type_ != "refresh":
@@ -23,12 +25,19 @@ async def refresh(response: Response, refresh_token: str = Cookie(..., alias="re
     return access_token
 
 
-@router.post("/access-revoke", response_class=Response, status_code=status.HTTP_200_OK)
+@router.post(
+    "/access-revoke",
+    response_class=Response,
+    status_code=status.HTTP_200_OK,
+    description="Revoking access token, **need to be authenticated by API Gateway**",
+)
 async def access_revoke(token_jti: str = Header(..., alias="Token")) -> None:
     await move_to_blacklist(token_jti, "key")
 
 
-@router.post("/refresh-revoke", response_class=Response, status_code=status.HTTP_200_OK)
+@router.post(
+    "/refresh-revoke", response_class=Response, status_code=status.HTTP_200_OK, description="Revoking refresh token"
+)
 async def refresh_revoke(refresh_token: str = Cookie(..., alias="refreshToken")) -> None:
     token_dto = await validate_token(refresh_token)
     if token_dto.type_ != "refresh":

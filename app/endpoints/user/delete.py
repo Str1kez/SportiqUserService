@@ -13,7 +13,12 @@ router = APIRouter(tags=["User"], prefix="/account")
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl=get_token_url())
 
 
-@router.delete("", response_class=Response, status_code=status.HTTP_204_NO_CONTENT)
+@router.delete(
+    "",
+    response_class=Response,
+    status_code=status.HTTP_204_NO_CONTENT,
+    description="**need to be authenticated by API Gateway**",
+)
 async def delete_user_account(user_id: str = Header(..., alias="User"), session: AsyncSession = Depends(get_session)):
     try:
         await delete_user(user_id, session)

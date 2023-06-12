@@ -14,7 +14,9 @@ router = APIRouter(tags=["User"], prefix="/info")
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl=get_token_url())
 
 
-@router.get("", response_model=User, status_code=status.HTTP_200_OK)
+@router.get(
+    "", response_model=User, status_code=status.HTTP_200_OK, description="**need to be authenticated by API Gateway**"
+)
 async def get_user_info(user_id: str = Header(..., alias="User"), session: AsyncSession = Depends(get_session)) -> User:
     try:
         user_db = await get_user_by_id(user_id, session)
@@ -27,7 +29,9 @@ async def get_user_info(user_id: str = Header(..., alias="User"), session: Async
     # return User.from_orm(user_db)
 
 
-@router.patch("", response_model=User, status_code=status.HTTP_200_OK)
+@router.patch(
+    "", response_model=User, status_code=status.HTTP_200_OK, description="**need to be authenticated by API Gateway**"
+)
 async def update_user_info(
     user_data: UserUpdate,
     user_id: str = Header(..., alias="User"),

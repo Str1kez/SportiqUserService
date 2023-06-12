@@ -1,0 +1,383 @@
+{
+  "openapi": "3.0.2",
+  "info": {
+    "title": "User Microservice for Sportiq project",
+    "description": "This microservice supports authentication with JWT and operations with personal info",
+    "version": "0.1.0"
+  },
+  "servers": [{ "url": "http://api.sportiq.org:8001" }],
+  "paths": {
+    "/api/v1/auth/login": {
+      "post": {
+        "tags": ["Auth", "Auth"],
+        "summary": "Login",
+        "operationId": "login_api_v1_auth_login_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": { "$ref": "#/components/schemas/Login" }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/CreatedTokens" }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/HTTPValidationError" }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/auth/signup": {
+      "post": {
+        "tags": ["Auth", "Auth"],
+        "summary": "Signup",
+        "operationId": "signup_api_v1_auth_signup_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": { "$ref": "#/components/schemas/SignUp" }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/CreatedTokens" }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/HTTPValidationError" }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/auth/token/refresh": {
+      "post": {
+        "tags": ["Auth", "Auth", "Token"],
+        "summary": "Refresh",
+        "description": "Token refreshing",
+        "operationId": "refresh_api_v1_auth_token_refresh_post",
+        "parameters": [
+          {
+            "required": true,
+            "schema": { "title": "Refreshtoken", "type": "string" },
+            "name": "refreshToken",
+            "in": "cookie"
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/CreatedTokens" }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/HTTPValidationError" }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/auth/token/access-revoke": {
+      "post": {
+        "tags": ["Auth", "Auth", "Token"],
+        "summary": "Access Revoke",
+        "description": "Revoking access token, **need to be authenticated by API Gateway**",
+        "operationId": "access_revoke_api_v1_auth_token_access_revoke_post",
+        "parameters": [
+          {
+            "required": true,
+            "schema": { "title": "Token", "type": "string" },
+            "name": "Token",
+            "in": "header"
+          }
+        ],
+        "responses": {
+          "200": { "description": "Successful Response" },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/HTTPValidationError" }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/auth/token/refresh-revoke": {
+      "post": {
+        "tags": ["Auth", "Auth", "Token"],
+        "summary": "Refresh Revoke",
+        "description": "Revoking refresh token",
+        "operationId": "refresh_revoke_api_v1_auth_token_refresh_revoke_post",
+        "parameters": [
+          {
+            "required": true,
+            "schema": { "title": "Refreshtoken", "type": "string" },
+            "name": "refreshToken",
+            "in": "cookie"
+          }
+        ],
+        "responses": {
+          "200": { "description": "Successful Response" },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/HTTPValidationError" }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/user/info": {
+      "get": {
+        "tags": ["User", "User"],
+        "summary": "Get User Info",
+        "description": "**need to be authenticated by API Gateway**",
+        "operationId": "get_user_info_api_v1_user_info_get",
+        "parameters": [
+          {
+            "required": true,
+            "schema": { "title": "User", "type": "string" },
+            "name": "User",
+            "in": "header"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/User" }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/HTTPValidationError" }
+              }
+            }
+          }
+        }
+      },
+      "patch": {
+        "tags": ["User", "User"],
+        "summary": "Update User Info",
+        "description": "**need to be authenticated by API Gateway**",
+        "operationId": "update_user_info_api_v1_user_info_patch",
+        "parameters": [
+          {
+            "required": true,
+            "schema": { "title": "User", "type": "string" },
+            "name": "User",
+            "in": "header"
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": { "$ref": "#/components/schemas/UserUpdate" }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/User" }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/HTTPValidationError" }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/user/account": {
+      "delete": {
+        "tags": ["User", "User"],
+        "summary": "Delete User Account",
+        "description": "**need to be authenticated by API Gateway**",
+        "operationId": "delete_user_account_api_v1_user_account_delete",
+        "parameters": [
+          {
+            "required": true,
+            "schema": { "title": "User", "type": "string" },
+            "name": "User",
+            "in": "header"
+          }
+        ],
+        "responses": {
+          "204": { "description": "Successful Response" },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/HTTPValidationError" }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "CreatedTokens": {
+        "title": "CreatedTokens",
+        "required": ["accessToken"],
+        "type": "object",
+        "properties": {
+          "accessToken": { "title": "Accesstoken", "type": "string" }
+        }
+      },
+      "HTTPValidationError": {
+        "title": "HTTPValidationError",
+        "type": "object",
+        "properties": {
+          "detail": {
+            "title": "Detail",
+            "type": "array",
+            "items": { "$ref": "#/components/schemas/ValidationError" }
+          }
+        }
+      },
+      "Login": {
+        "title": "Login",
+        "required": ["username", "password"],
+        "type": "object",
+        "properties": {
+          "username": { "title": "Username", "minLength": 6, "type": "string" },
+          "password": {
+            "title": "Password",
+            "minLength": 8,
+            "type": "string",
+            "format": "password",
+            "writeOnly": true
+          }
+        }
+      },
+      "SignUp": {
+        "title": "SignUp",
+        "required": [
+          "username",
+          "password",
+          "phoneNumber",
+          "firstName",
+          "lastName"
+        ],
+        "type": "object",
+        "properties": {
+          "username": { "title": "Username", "minLength": 6, "type": "string" },
+          "password": {
+            "title": "Password",
+            "minLength": 8,
+            "type": "string",
+            "format": "password",
+            "writeOnly": true
+          },
+          "phoneNumber": {
+            "title": "Phonenumber",
+            "pattern": "^(\\+)[1-9][0-9\\-\\(\\)\\.]{9,15}$",
+            "type": "string"
+          },
+          "firstName": {
+            "title": "Firstname",
+            "minLength": 2,
+            "type": "string"
+          },
+          "lastName": { "title": "Lastname", "minLength": 2, "type": "string" }
+        }
+      },
+      "User": {
+        "title": "User",
+        "required": ["username", "phoneNumber", "firstName", "lastName"],
+        "type": "object",
+        "properties": {
+          "id": { "title": "Id", "type": "string" },
+          "username": { "title": "Username", "type": "string" },
+          "phoneNumber": { "title": "Phonenumber", "type": "string" },
+          "firstName": { "title": "Firstname", "type": "string" },
+          "lastName": { "title": "Lastname", "type": "string" }
+        }
+      },
+      "UserUpdate": {
+        "title": "UserUpdate",
+        "type": "object",
+        "properties": {
+          "username": { "title": "Username", "minLength": 6, "type": "string" },
+          "phoneNumber": {
+            "title": "Phonenumber",
+            "pattern": "^(\\+)[1-9][0-9\\-\\(\\)\\.]{9,15}$",
+            "type": "string"
+          },
+          "password": {
+            "title": "Password",
+            "minLength": 8,
+            "type": "string",
+            "format": "password",
+            "writeOnly": true
+          },
+          "firstName": { "title": "Firstname", "type": "string" },
+          "lastName": { "title": "Lastname", "type": "string" }
+        }
+      },
+      "ValidationError": {
+        "title": "ValidationError",
+        "required": ["loc", "msg", "type"],
+        "type": "object",
+        "properties": {
+          "loc": {
+            "title": "Location",
+            "type": "array",
+            "items": { "anyOf": [{ "type": "string" }, { "type": "integer" }] }
+          },
+          "msg": { "title": "Message", "type": "string" },
+          "type": { "title": "Error Type", "type": "string" }
+        }
+      }
+    }
+  }
+}
