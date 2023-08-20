@@ -90,4 +90,5 @@ ENV/
 .ropeproject
 
 # Editor configs
+.idea/
 .vscode/
